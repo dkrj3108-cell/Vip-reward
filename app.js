@@ -3,9 +3,8 @@ const { useState, useEffect } = React;
 const MINT = "#2ee6db", MINT_DEEP = "#12a89e", VIOLET = "#7b5cff", BG = "#0e0b22";
 const CARD = "rgba(255,255,255,0.045)", BORDER = "rgba(123,92,255,0.22)";
 function Phone({ children }) {
-    return (React.createElement("div", { className: "min-h-screen w-full flex items-center justify-center p-4", style: { background: "#e8e9e4" } },
-        React.createElement("div", { className: "w-full max-w-[420px] h-[100vh] max-h-[860px] rounded-[2rem] overflow-hidden relative flex flex-col", style: { background: `linear-gradient(180deg,#150f33 0%,${BG} 100%)`, boxShadow: "0 40px 80px -20px rgba(0,0,0,0.5)" } },
-            React.createElement("div", { className: "flex-1 overflow-y-auto relative" }, children))));
+    return (React.createElement("div", { className: "w-full relative flex flex-col", style: { height: "100dvh", background: `linear-gradient(180deg,#150f33 0%,${BG} 100%)` } },
+        React.createElement("div", { className: "flex-1 overflow-y-auto relative" }, children)));
 }
 function InviteScreen({ go }) {
     return (React.createElement("div", { className: "h-full flex flex-col items-center justify-between px-8 pt-14 pb-10 text-center relative overflow-hidden screen-enter" },
