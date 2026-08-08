@@ -11,7 +11,6 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   body { margin:0; font-family:'Inter',sans-serif; }
@@ -27,167 +26,16 @@
   .dot { animation: bounceDot 1.2s infinite ease-in-out; }
   .check-pop { animation: checkPop .4s cubic-bezier(.34,1.56,.64,1) both; }
   .sora { font-family:'Sora',sans-serif; }
+  #root:empty::after {
+    content: "Loading…";
+    display:flex; align-items:center; justify-content:center;
+    height:100vh; color:#8a8fa3; font-family:sans-serif;
+  }
 </style>
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel" data-presets="react">
-const { useState, useEffect } = React;
-const MINT="#2ee6db", MINT_DEEP="#12a89e", VIOLET="#7b5cff", BG="#0e0b22";
-const CARD="rgba(255,255,255,0.045)", BORDER="rgba(123,92,255,0.22)";
-
-function Phone({children}){
-  return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4" style={{background:"#e8e9e4"}}>
-      <div className="w-full max-w-[420px] h-[100vh] max-h-[860px] rounded-[2rem] overflow-hidden relative flex flex-col"
-        style={{background:`linear-gradient(180deg,#150f33 0%,${BG} 100%)`,boxShadow:"0 40px 80px -20px rgba(0,0,0,0.5)"}}>
-        <div className="flex-1 overflow-y-auto relative">{children}</div>
-      </div>
-    </div>
-  );
-}
-
-function InviteScreen({go}){
-  return (
-    <div className="h-full flex flex-col items-center justify-between px-8 pt-14 pb-10 text-center relative overflow-hidden screen-enter">
-      <div className="absolute inset-0" style={{background:`radial-gradient(circle at 50% 30%, rgba(123,92,255,0.35), transparent 60%)`}}/>
-      <div/>
-      <div className="relative z-10 flex flex-col items-center">
-        <div className="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold text-white mb-6"
-          style={{background:`linear-gradient(145deg,${VIOLET},#4c33b8)`,border:"2px solid rgba(255,255,255,0.15)"}}>A</div>
-        <h1 className="text-white text-[22px] font-bold sora">Aarav invites you to join</h1>
-        <p className="text-neutral-400 text-[14px] mt-2">Walk, earn rewards, and cash out real prizes</p>
-      </div>
-      <div className="relative z-10 w-full flex flex-col items-center gap-4">
-        <button onClick={()=>go("rewards")} className="tap-scale w-full py-4 rounded-2xl font-bold text-[14px] sora"
-          style={{background:"white",color:"#150f33"}}>Accept Invite</button>
-      </div>
-    </div>
-  );
-}
-
-const tiers=[5,10,20,50,100,200,500,1000];
-
-function RewardCircle({amount,onClick,delay}){
-  const r=30,c=2*Math.PI*r;
-  return (
-    <button onClick={onClick} className="tap-scale card-enter flex flex-col items-center gap-2 p-3 rounded-2xl"
-      style={{background:CARD,border:`1px solid ${BORDER}`,animationDelay:`${delay}ms`}}>
-      <div className="relative w-[74px] h-[74px] flex items-center justify-center">
-        <svg width="74" height="74" className="absolute inset-0 -rotate-90">
-          <circle cx="37" cy="37" r={r} stroke="rgba(255,255,255,0.08)" strokeWidth="5" fill="none"/>
-          <circle cx="37" cy="37" r={r} stroke={MINT} strokeWidth="5" fill="none"
-            strokeDasharray={c} strokeDashoffset={c*0.12} strokeLinecap="round"/>
-        </svg>
-        <span className="text-white font-extrabold text-[15px] sora">${amount}</span>
-      </div>
-      <p className="text-[10.5px] text-neutral-400 text-center leading-snug">Available to redeem now</p>
-    </button>
-  );
-}
-
-function RewardsScreen({go,pick}){
-  return (
-    <div className="h-full flex flex-col relative z-10 screen-enter">
-      <div className="px-6 pt-6 pb-2 flex items-center justify-between">
-        <h2 className="text-white text-[20px] font-bold sora">Rewards</h2>
-      </div>
-      <div className="px-6 mt-2 rounded-2xl p-5" style={{background:`linear-gradient(140deg,#2a1f5c,#150f33)`,border:`1px solid ${BORDER}`}}>
-        <p className="text-neutral-400 text-[11px] font-bold uppercase" style={{letterSpacing:"1px"}}>Your Highest Reward</p>
-        <div className="flex items-center gap-3 mt-3">
-          <div className="w-12 h-12 rounded-full flex items-center justify-center text-xl" style={{background:`linear-gradient(145deg,#f4c860,#c9932c)`}}>🪙</div>
-          <div>
-            <p className="text-white font-extrabold text-[18px] sora">USD 100</p>
-            <p className="text-neutral-400 text-[11.5px]">Invite more people to unlock your next reward.</p>
-          </div>
-        </div>
-      </div>
-      <div className="px-6 mt-6 grid grid-cols-2 gap-3 pb-6">
-        {tiers.map((t,i)=><RewardCircle key={t} amount={t} delay={i*40} onClick={()=>{pick(t);go("claim");}}/>)}
-      </div>
-    </div>
-  );
-}
-
-function ClaimScreen({go,amount}){
-  const invitesUsed=Math.round(amount*8.33), coinsUsed=Math.round(amount*333.2);
-  return (
-    <div className="h-full flex flex-col relative z-10 screen-enter px-6 pt-10">
-      <div className="text-center mb-6">
-        <p className="text-neutral-400 text-[13px] font-semibold">Claim Your Reward</p>
-        <p className="text-white font-extrabold text-[40px] mt-1 sora">${amount}<span className="text-[16px] text-neutral-400 ml-1">USD</span></p>
-      </div>
-      <div className="rounded-2xl p-4" style={{background:CARD,border:`1px solid ${BORDER}`}}>
-        <div className="flex items-center justify-between py-3" style={{borderBottom:`1px solid ${BORDER}`}}>
-          <p className="text-white text-[13px] font-semibold">👥 Invites</p>
-          <p className="font-bold text-[14px] sora" style={{color:"#ff8a5c"}}>- {invitesUsed}</p>
-        </div>
-        <div className="flex items-center justify-between py-3">
-          <p className="text-white text-[13px] font-semibold">🪙 StepCoins</p>
-          <p className="font-bold text-[14px] sora" style={{color:MINT}}>- {coinsUsed.toLocaleString()}</p>
-        </div>
-      </div>
-      <div className="flex-1"/>
-      <div className="pb-10 flex flex-col gap-3">
-        <button onClick={()=>go("processing")} className="tap-scale w-full py-4 rounded-2xl font-bold text-[14px] sora"
-          style={{background:`linear-gradient(135deg,#45f5ea,${MINT},${MINT_DEEP})`,color:"#031715"}}>CONFIRM & CLAIM</button>
-        <button onClick={()=>go("rewards")} className="tap-scale w-full py-3 rounded-2xl font-semibold text-[13px] text-neutral-400">Cancel</button>
-      </div>
-    </div>
-  );
-}
-
-function Processing({go}){
-  useEffect(()=>{ const t=setTimeout(()=>go("success"),2000); return ()=>clearTimeout(t); },[]);
-  return (
-    <div className="h-full flex flex-col items-center justify-center relative z-10 screen-enter">
-      <div className="w-16 h-16 rounded-full mb-8" style={{border:`4px solid rgba(255,255,255,0.1)`,borderTopColor:MINT,animation:"spin 0.9s linear infinite"}}/>
-      <div className="flex gap-2 mb-4">
-        {[0,1,2].map(i=><div key={i} className="w-2.5 h-2.5 rounded-full dot" style={{background:MINT,animationDelay:`${i*0.15}s`}}/>)}
-      </div>
-      <p className="text-neutral-400 text-[13px] font-semibold sora">minting coins</p>
-    </div>
-  );
-}
-
-function Success({go,amount}){
-  return (
-    <div className="h-full flex items-end relative z-10">
-      <div className="relative z-10 w-full rounded-t-[2rem] p-6 card-enter" style={{background:"#150f33",border:`1px solid ${BORDER}`}}>
-        <p className="text-white font-bold text-[15px] mb-4 sora">Successful redemption</p>
-        <div className="rounded-2xl p-6 flex flex-col items-center text-center mb-4" style={{background:`linear-gradient(160deg,#4c33b8,#2a1f5c)`}}>
-          <div className="w-16 h-16 rounded-full flex items-center justify-center mb-3 check-pop text-2xl"
-            style={{background:`linear-gradient(145deg,#45f5ea,${MINT_DEEP})`}}>✓</div>
-          <p className="text-white font-bold text-[16px] sora">Cash Reward</p>
-          <p className="text-white font-extrabold text-[22px] mt-2 sora">${amount} Cashout</p>
-        </div>
-        <p className="text-neutral-400 text-[12px] leading-relaxed mb-4">
-          Your ${amount} reward is on its way — sent to your linked payment method within 3–5 business days.
-        </p>
-        <button onClick={()=>go("rewards")} className="tap-scale w-full py-3.5 rounded-2xl font-bold text-[13px] sora"
-          style={{background:`linear-gradient(135deg,#45f5ea,${MINT})`,color:"#031715"}}>DONE</button>
-      </div>
-    </div>
-  );
-}
-
-function App(){
-  const [screen,setScreen]=useState("invite");
-  const [amount,setAmount]=useState(100);
-  const go=(s)=>setScreen(s);
-  return (
-    <Phone>
-      {screen==="invite" && <InviteScreen go={go}/>}
-      {screen==="rewards" && <RewardsScreen go={go} pick={setAmount}/>}
-      {screen==="claim" && <ClaimScreen go={go} amount={amount}/>}
-      {screen==="processing" && <Processing go={go}/>}
-      {screen==="success" && <Success go={go} amount={amount}/>}
-    </Phone>
-  );
-}
-
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
-</script>
+<script src="app.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
